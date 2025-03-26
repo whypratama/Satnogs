@@ -1,0 +1,141 @@
+# SatNOGS Client Installation Guide on Raspberry Pi
+
+---
+
+### Prerequisite: Raspberry Pi Installation
+All the following steps should be performed after the Raspberry Pi operating system installation on the Raspberry Pi device is completed.
+
+---
+
+### Step #1: Editing the Repository Source List (Only for Indonesian User)
+
+Open the `sources.list` configuration file to configure the repository sources to be used.
+```bash
+sudo nano /etc/apt/sources.list
+```
+
+Add or modify the following lines:
+```plaintext
+deb http://kartolo.sby.datautama.net.id/debian/ buster main contrib non-free  
+# Main repository from the Indonesian local mirror
+
+#deb http://deb.debian.org/debian buster main contrib non-free  
+# Main repository from the official Debian server (commented, not used)
+
+#deb-src http://deb.debian.org/debian buster main contrib non-free  
+# Source code repository (commented, not used)
+
+deb http://kartolo.sby.datautama.net.id/debian/ buster-updates main contrib non-free
+# Update repository from the Indonesian local mirror
+
+#deb http://deb.debian.org/debian buster-updates main contrib non-free  
+# Update repository from the official Debian server (commented, not used)
+
+#deb-src http://deb.debian.org/debian buster-updates main contrib non-free  
+# Source code update repository (commented, not used)
+
+#deb http://deb.debian.org/debian buster-backports main contrib non-free  
+# Backports repository (not used)
+
+#deb-src http://deb.debian.org/debian buster-backports main contrib non-free  
+# Source code backports repository (commented, not used)
+
+deb http://kartolo.sby.datautama.net.id/debian-security/ buster/updates main contrib non-free
+# Security repository from the Indonesian local mirror
+
+#deb http://security.debian.org/ buster/updates main contrib non-free  
+# Security repository from the official Debian server (commented, not used)
+
+#deb-src http://security.debian.org/ buster/updates main contrib non-free  
+# Security source code repository (commented, not used)
+```
+
+---
+
+### Step #2: System Update and Upgrade
+Update and upgrade the system to sync with the new repository list.
+```bash
+sudo apt-get update --allow-releaseinfo-change
+sudo apt-get -y upgrade
+```
+
+---
+
+### Step #3: Adding Ansible Repository
+Reopen `sources.list` to add the Ansible repository.
+```bash
+sudo nano /etc/apt/sources.list
+```
+Add the following line:
+```plaintext
+deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main
+```
+Add the GPG key to ensure the repository's security.
+```bash
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+```
+
+---
+
+### Step #4: Installing Ansible and Dependencies
+```bash
+sudo apt update
+sudo apt install ansible
+sudo pip install ansible-core==2.12.0b1
+sudo apt install sshpass
+sudo apt install pkg-config
+sudo apt install cmake g++
+sudo apt install python3-numpy
+sudo apt install swig
+sudo apt install python3-dev
+sudo apt install libhdf5-dev
+```
+
+Installing `h5py` if the previous step fails:
+```bash
+sudo apt install python-h5py
+# Or
+sudo apt-get install python3-h5py
+```
+
+---
+
+### Step #5: Cloning and Configuring SatNOGS Client
+```bash
+git clone https://gitlab.com/librespacefoundation/satnogs/satnogs-client-ansible.git
+cd satnogs-client-ansible
+git checkout stable
+cp -r production.dist production
+nano production/inventory/hosts
+```
+
+---
+
+### Step #6: Verifying SSH Connection
+```bash
+ssh pi@127.0.0.1 true
+```
+
+---
+
+### Step #7: Running the Ansible Playbook
+```bash
+ansible-playbook -i production/inventory/hosts -K site.yml
+```
+
+---
+
+### Step #8: Running SatNOGS Setup
+```bash
+ssh -t pi@127.0.0.1 sudo satnogs-setup
+```
+
+---
+
+### Step #9: Installing GPS Python Library
+```bash
+sudo apt update
+sudo apt install python3-gps
+```
+
+---
