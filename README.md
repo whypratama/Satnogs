@@ -1,0 +1,2 @@
+# Satnogs
+Satnogs Client Setup
